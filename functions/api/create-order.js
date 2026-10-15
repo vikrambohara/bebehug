@@ -1,4 +1,4 @@
-```javascript
+
 const CATALOGUE = {
   "Feel Dry Washable Quick-Drying Sheet": {
     sizes: { S: 165, M: 300, L: 545, XL: 1200 },
@@ -25,19 +25,20 @@ const CATALOGUE = {
   }
 };
 
-const json = (body, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status: status,
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store"
     }
   });
+}
 
 export async function onRequestPost({ request, env }) {
   if (env.PAYMENTS_ENABLED !== "true") {
     return json({
-      error: "Online payments are not enabled yet. Please contact us on WhatsApp."
+      error: "Online payments are not enabled. Please contact us on WhatsApp."
     }, 503);
   }
 
@@ -47,8 +48,6 @@ export async function onRequestPost({ request, env }) {
     }, 503);
   }
 
-  const shipping = 0;
-
   try {
     const body = await request.json();
     const cart = body && body.cart;
@@ -57,7 +56,8 @@ export async function onRequestPost({ request, env }) {
     if (
       !Array.isArray(cart) ||
       cart.length === 0 ||
-      typeof (customer && customer.name) !== "string" ||
+      !customer ||
+      typeof customer.name !== "string" ||
       !customer.name.trim() ||
       !/^[6-9]\d{9}$/.test(String(customer.phone || "")) ||
       typeof customer.address !== "string" ||
@@ -91,36 +91,28 @@ export async function onRequestPost({ request, env }) {
         }, 400);
       }
 
-      const unitPrice = product.sizes[line.size];
-      subtotal += unitPrice * qty;
+      subtotal += product.sizes[line.size] * qty;
 
       items.push(
-        String(line.name) + " | " +
-        String(line.size) + " | " +
-        String(line.colour) + " | Qty " + String(qty)
+        `${line.name} | ${line.size} | ${line.colour} | Qty ${qty}`
       );
     }
 
-    const total = subtotal + shipping;
-    const totalPaise = total * 100;
+    const totalPaise = subtotal * 100;
 
     const notes = {
-      customer_name: String(customer.name).slice(0, 255),
+      customer_name: customer.name.slice(0, 255),
       customer_phone: String(customer.phone).slice(0, 255),
       customer_email: String(customer.email || "").slice(0, 255),
-      delivery_address: (
-        String(customer.address) + ", " +
-        String(customer.city) + " - " +
-        String(customer.pin)
-      ).slice(0, 255),
+      delivery_address:
+        `${customer.address}, ${customer.city} - ${customer.pin}`.slice(0, 255),
       items: items.join("; ").slice(0, 255),
       product_subtotal_inr: String(subtotal),
-      shipping_charge_inr: String(shipping)
+      shipping_charge_inr: "0"
     };
 
     const auth = btoa(
-      String(env.RAZORPAY_KEY_ID) + ":" +
-      String(env.RAZORPAY_KEY_SECRET)
+      `${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`
     );
 
     const response = await fetch(
@@ -128,30 +120,43 @@ export async function onRequestPost({ request, env }) {
       {
         method: "POST",
         headers: {
-          Authorization: "Basic " + auth,
+          Authorization: `Basic ${auth}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           amount: totalPaise,
           currency: "INR",
-          receipt: ("bh_" + Date.now()).slice(0, 40),
-          notes: notes
+          receipt: `bh_${Date.now()}`.slice(0, 40),
+          notes
         })
       }
     );
 
-    const result = await response.json();
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      result = {};
+    }
 
     if (!response.ok) {
-      const razorpayError = result && result.error
+      const rpError = result && result.error
         ? result.error
         : {};
 
+      const code = String(rpError.code || "UNKNOWN");
+      const description = String(
+        rpError.description || "Razorpay returned no error details."
+      );
+
       return json({
-        error: "Razorpay error: " +
-          (razorpayError.code || "UNKNOWN") + " - " +
-          (razorpayError.description ||
-            "No details returned by Razorpay.")
+        error: `Razorpay error: ${code} - ${description}`
+      }, 502);
+    }
+
+    if (!result.id || !result.amount) {
+      return json({
+        error: "Razorpay did not return a valid order. Please try again."
       }, 502);
     }
 
@@ -161,13 +166,12 @@ export async function onRequestPost({ request, env }) {
       currency: result.currency,
       keyId: env.RAZORPAY_KEY_ID,
       productSubtotal: subtotal,
-      shippingCharge: shipping,
-      total: total
+      shippingCharge: 0,
+      total: subtotal
     });
   } catch (error) {
     return json({
-      error: "Unable to start payment. Please try again or contact us on WhatsApp."
+      error: "Unable to start payment. Please try again."
     }, 500);
   }
 }
-```
