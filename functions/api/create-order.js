@@ -27,7 +27,7 @@ const CATALOGUE = {
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
-    status,
+    status: status,
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store"
@@ -51,16 +51,20 @@ export async function onRequestPost({ request, env }) {
 
   try {
     const body = await request.json();
-    const { cart, customer } = body || {};
+    const cart = body && body.cart;
+    const customer = body && body.customer;
 
     if (
       !Array.isArray(cart) ||
       cart.length === 0 ||
-      !customer?.name?.trim() ||
-      !/^[6-9]\d{9}$/.test(String(customer?.phone || "")) ||
-      !customer?.address?.trim() ||
-      !customer?.city?.trim() ||
-      !/^\d{6}$/.test(String(customer?.pin || ""))
+      typeof (customer && customer.name) !== "string" ||
+      !customer.name.trim() ||
+      !/^[6-9]\d{9}$/.test(String(customer.phone || "")) ||
+      typeof customer.address !== "string" ||
+      !customer.address.trim() ||
+      typeof customer.city !== "string" ||
+      !customer.city.trim() ||
+      !/^\d{6}$/.test(String(customer.pin || ""))
     ) {
       return json({
         error: "Enter your name, valid 10-digit mobile number, address, city and 6-digit PIN code."
@@ -90,9 +94,10 @@ export async function onRequestPost({ request, env }) {
       const unitPrice = product.sizes[line.size];
       subtotal += unitPrice * qty;
 
-      // Correct template string: keep the backticks around this line.
       items.push(
-        `${line.name} | ${line.size} | ${line.colour} | Qty ${qty}`
+        String(line.name) + " | " +
+        String(line.size) + " | " +
+        String(line.colour) + " | Qty " + String(qty)
       );
     }
 
@@ -103,15 +108,19 @@ export async function onRequestPost({ request, env }) {
       customer_name: String(customer.name).slice(0, 255),
       customer_phone: String(customer.phone).slice(0, 255),
       customer_email: String(customer.email || "").slice(0, 255),
-      delivery_address:
-        `${customer.address}, ${customer.city} - ${customer.pin}`.slice(0, 255),
+      delivery_address: (
+        String(customer.address) + ", " +
+        String(customer.city) + " - " +
+        String(customer.pin)
+      ).slice(0, 255),
       items: items.join("; ").slice(0, 255),
       product_subtotal_inr: String(subtotal),
       shipping_charge_inr: String(shipping)
     };
 
     const auth = btoa(
-      `${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`
+      String(env.RAZORPAY_KEY_ID) + ":" +
+      String(env.RAZORPAY_KEY_SECRET)
     );
 
     const response = await fetch(
@@ -119,14 +128,14 @@ export async function onRequestPost({ request, env }) {
       {
         method: "POST",
         headers: {
-          Authorization: `Basic ${auth}`,
+          Authorization: "Basic " + auth,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           amount: totalPaise,
           currency: "INR",
-          receipt: `bh_${Date.now()}`.slice(0, 40),
-          notes
+          receipt: ("bh_" + Date.now()).slice(0, 40),
+          notes: notes
         })
       }
     );
@@ -134,13 +143,13 @@ export async function onRequestPost({ request, env }) {
     const result = await response.json();
 
     if (!response.ok) {
-      const razorpayError = result?.error || {};
+      const razorpayError = result && result.error
+        ? result.error
+        : {};
 
       return json({
-        error:
-          "Razorpay error: " +
-          (razorpayError.code || "UNKNOWN") +
-          " — " +
+        error: "Razorpay error: " +
+          (razorpayError.code || "UNKNOWN") + " - " +
           (razorpayError.description ||
             "No details returned by Razorpay.")
       }, 502);
@@ -153,7 +162,7 @@ export async function onRequestPost({ request, env }) {
       keyId: env.RAZORPAY_KEY_ID,
       productSubtotal: subtotal,
       shippingCharge: shipping,
-      total
+      total: total
     });
   } catch (error) {
     return json({
