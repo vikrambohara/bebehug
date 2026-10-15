@@ -1,0 +1,20 @@
+GOOGLE SHEETS PRODUCT MASTER — SETUP GUIDE
+
+1. Create a Google Sheet named Dr.Bohrras Baby Store Catalogue.
+2. Add a tab named Products. Put these headers in row 1 exactly:
+   id | name | description | image | tag | variants_json | colours
+3. Use one row per product. Suggested IDs: feel, rubber, magic.
+4. Example variants_json for Feel Dry (paste as one cell):
+   [{"label":"S — 70 × 50 cm","value":"S","price":165},{"label":"M — 70 × 100 cm","value":"M","price":300},{"label":"L — 140 × 100 cm","value":"L","price":545},{"label":"XL — 140 × 200 cm","value":"XL","price":1200}]
+   Rubber sheet: [{"label":"90 × 100 cm","value":"90 × 100 cm","price":450},{"label":"90 × 200 cm","value":"90 × 200 cm","price":800},{"label":"90 × 300 cm","value":"90 × 300 cm","price":1050}]
+   Magic Mat: [{"label":"90 × 90 cm","value":"90 × 90 cm","price":350},{"label":"90 × 180 cm","value":"90 × 180 cm","price":550}]
+5. In colours, separate options with |. For Feel Dry: Pink|Blue|Maroon|Pista|Red|Rose. For Magic Mat: Pink printed|Blue printed. For rubber: Pink & Blue.
+6. For images, use publicly accessible HTTPS image URLs. The local images in assets/ are not automatically hosted by Google Sheets; once the site is deployed, use their live site URLs or a public image host.
+7. Open Extensions > Apps Script in that Sheet. Replace the editor contents with google-sheets-apps-script.gs. Save.
+8. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone. Deploy and copy the /exec URL.
+9. Put that URL in config.js as googleSheetsApiUrl.
+
+Important: The current site includes the starter endpoint and config field, but the storefront is not yet switched to dynamically render the entire catalogue from Sheets. That final wiring should be tested after you provide the deployed URL. The sheet is for catalogue data only, not payment secrets.
+
+IMPORTANT STATUS NOTE
+This starter includes a sample Apps Script, but the storefront does not yet automatically load the live Google Sheet. After deploying the script as a Web App and putting its URL in config.js, the front-end catalogue fetch and validation must be connected and tested. Do not expect sheet edits to change the site until that final connection is completed.
