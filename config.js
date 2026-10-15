@@ -4,5 +4,5 @@ window.STORE_CONFIG = {
   officeAddress: "Boharras Inc., No. 309, Mint Street, Chennai - 600003, Tamil Nadu, India",
   phoneNumber: "+91 98400 17107",
   googleSheetsApiUrl: "", // Add the deployed Google Apps Script Web App URL after publishing it.
-  razorpayKeyId: "rzp_test_YnRNxF9Qw8m8i3"
+  razorpayKeyId: "rzp_test_ToHLY2lvHyk7Ew"
 };
