@@ -1,4 +1,4 @@
-
+```javascript
 const CATALOGUE = {
   "Feel Dry Washable Quick-Drying Sheet": {
     sizes: { S: 165, M: 300, L: 545, XL: 1200 },
@@ -42,7 +42,9 @@ export async function onRequestPost({ request, env }) {
   }
 
   if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) {
-    return json({ error: "Payment configuration is incomplete." }, 503);
+    return json({
+      error: "Payment configuration is incomplete."
+    }, 503);
   }
 
   // Free delivery on every order.
@@ -94,7 +96,7 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    const totalPaise = subtotal * 100;
+    const totalPaise = (subtotal + shipping) * 100;
 
     const notes = {
       customer_name: String(customer.name).slice(0, 255),
@@ -104,32 +106,42 @@ export async function onRequestPost({ request, env }) {
         `${customer.address}, ${customer.city} - ${customer.pin}`.slice(0, 255),
       items: items.join("; ").slice(0, 255),
       product_subtotal_inr: String(subtotal),
-      shipping_charge_inr: "0"
+      shipping_charge_inr: String(shipping)
     };
 
     const auth = btoa(
       `${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`
     );
 
-    const response = await fetch("https://api.razorpay.com/v1/orders", {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        amount: totalPaise,
-        currency: "INR",
-        receipt: `bh_${Date.now()}`.slice(0, 40),
-        notes
-      })
-    });
+    const response = await fetch(
+      "https://api.razorpay.com/v1/orders",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: totalPaise,
+          currency: "INR",
+          receipt: `bh_${Date.now()}`.slice(0, 40),
+          notes
+        })
+      }
+    );
 
     const result = await response.json();
 
     if (!response.ok) {
+      const razorpayError = result?.error || {};
+
       return json({
-        error: "Razorpay could not create the order. Please try again."
+        error:
+          "Razorpay error: " +
+          (razorpayError.code || "UNKNOWN") +
+          " — " +
+          (razorpayError.description ||
+            "No details returned by Razorpay.")
       }, 502);
     }
 
@@ -139,8 +151,8 @@ export async function onRequestPost({ request, env }) {
       currency: result.currency,
       keyId: env.RAZORPAY_KEY_ID,
       productSubtotal: subtotal,
-      shippingCharge: 0,
-      total: subtotal
+      shippingCharge: shipping,
+      total: subtotal + shipping
     });
   } catch (error) {
     return json({
@@ -148,3 +160,4 @@ export async function onRequestPost({ request, env }) {
     }, 500);
   }
 }
+```
