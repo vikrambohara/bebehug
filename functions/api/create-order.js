@@ -47,7 +47,6 @@ export async function onRequestPost({ request, env }) {
     }, 503);
   }
 
-  // Free delivery on every order.
   const shipping = 0;
 
   try {
@@ -91,12 +90,14 @@ export async function onRequestPost({ request, env }) {
       const unitPrice = product.sizes[line.size];
       subtotal += unitPrice * qty;
 
+      // Correct template string: keep the backticks around this line.
       items.push(
         `${line.name} | ${line.size} | ${line.colour} | Qty ${qty}`
       );
     }
 
-    const totalPaise = (subtotal + shipping) * 100;
+    const total = subtotal + shipping;
+    const totalPaise = total * 100;
 
     const notes = {
       customer_name: String(customer.name).slice(0, 255),
@@ -152,7 +153,7 @@ export async function onRequestPost({ request, env }) {
       keyId: env.RAZORPAY_KEY_ID,
       productSubtotal: subtotal,
       shippingCharge: shipping,
-      total: subtotal + shipping
+      total
     });
   } catch (error) {
     return json({
