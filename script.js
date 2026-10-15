@@ -1,4 +1,3 @@
-```javascript
 const CART_KEY = "drbohrras_baby_cart_v1";
 
 let cart = [];
@@ -278,4 +277,3 @@ if (whatsappButton) {
     );
   });
 }
-```
