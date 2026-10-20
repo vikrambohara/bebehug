@@ -127,6 +127,7 @@ export async function onRequestPost({ request, env }) {
           amount: totalPaise,
           currency: "INR",
           receipt: `bh_${Date.now()}`.slice(0, 40),
+          payment_capture: 1,
           notes
         })
       }
