@@ -22,6 +22,92 @@ async function razorpayRequest(path, env) {
   });
 }
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+async function sendOrderEmail(env, order, payment) {
+  if (
+    !env.RESEND_API_KEY ||
+    !env.ORDER_NOTIFICATION_EMAIL ||
+    !env.ORDER_EMAIL_FROM
+  ) {
+    throw new Error("Order email configuration is incomplete.");
+  }
+
+  const notes = order.notes || {};
+  const customerName = notes.customer_name || "Not provided";
+  const customerPhone = notes.customer_phone || "Not provided";
+  const customerEmail = notes.customer_email || "Not provided";
+  const address = notes.delivery_address || "Not provided";
+  const items = notes.items || "Please check the Razorpay order notes.";
+  const subtotal = notes.product_subtotal_inr || (order.amount / 100);
+  const shipping = notes.shipping_charge_inr || "0";
+  const total = (order.amount / 100).toFixed(2);
+
+  const html = `
+    <h2>Bebehug - New Paid Order</h2>
+    <p><strong>Payment status:</strong> Captured</p>
+    <h3>Customer details</h3>
+    <p><strong>Name:</strong> ${escapeHtml(customerName)}</p>
+    <p><strong>Mobile:</strong> ${escapeHtml(customerPhone)}</p>
+    <p><strong>Email:</strong> ${escapeHtml(customerEmail)}</p>
+    <p><strong>Delivery address:</strong> ${escapeHtml(address)}</p>
+    <h3>Order details</h3>
+    <p>${escapeHtml(items)}</p>
+    <p><strong>Products subtotal:</strong> ₹${escapeHtml(subtotal)}</p>
+    <p><strong>Delivery:</strong> ₹${escapeHtml(shipping)}</p>
+    <p><strong>Order total:</strong> ₹${escapeHtml(total)}</p>
+    <p><strong>Razorpay order ID:</strong> ${escapeHtml(order.id)}</p>
+    <p><strong>Razorpay payment ID:</strong> ${escapeHtml(payment.id)}</p>
+  `;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: env.ORDER_EMAIL_FROM,
+      to: [env.ORDER_NOTIFICATION_EMAIL],
+      subject: `Bebehug paid order - ${order.id}`,
+      html,
+      text: [
+        "Bebehug - New Paid Order",
+        `Customer: ${customerName}`,
+        `Mobile: ${customerPhone}`,
+        `Email: ${customerEmail}`,
+        `Address: ${address}`,
+        `Items: ${items}`,
+        `Subtotal: INR ${subtotal}`,
+        `Delivery: INR ${shipping}`,
+        `Total: INR ${total}`,
+        `Razorpay order ID: ${order.id}`,
+        `Razorpay payment ID: ${payment.id}`
+      ].join("\n")
+    })
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      `Resend error (${response.status}): ${
+        result.message || result.name || "Email send failed"
+      }`
+    );
+  }
+
+  return result.id || null;
+}
+
 export async function onRequestPost({ request, env }) {
   if (env.PAYMENTS_ENABLED !== "true") {
     return json({
@@ -55,7 +141,7 @@ export async function onRequestPost({ request, env }) {
       }, 400);
     }
 
-    // 1. Verify Razorpay's checkout signature.
+    // Verify Razorpay checkout signature.
     const encoder = new TextEncoder();
 
     const hmacKey = await crypto.subtle.importKey(
@@ -80,8 +166,7 @@ export async function onRequestPost({ request, env }) {
 
     const received = signature.toLowerCase();
 
-    let mismatch =
-      expectedSignature.length ^ received.length;
+    let mismatch = expectedSignature.length ^ received.length;
 
     for (let i = 0; i < expectedSignature.length; i++) {
       mismatch |=
@@ -96,7 +181,7 @@ export async function onRequestPost({ request, env }) {
       }, 400);
     }
 
-    // 2. Fetch the payment directly from Razorpay.
+    // Retrieve payment from Razorpay.
     const paymentResponse = await razorpayRequest(
       `/payments/${encodeURIComponent(paymentId)}`,
       env
@@ -111,7 +196,7 @@ export async function onRequestPost({ request, env }) {
 
     const payment = await paymentResponse.json();
 
-    // 3. Fetch the original server-created Razorpay order.
+    // Retrieve original server-created order and its customer notes.
     const orderResponse = await razorpayRequest(
       `/orders/${encodeURIComponent(orderId)}`,
       env
@@ -126,18 +211,13 @@ export async function onRequestPost({ request, env }) {
 
     const order = await orderResponse.json();
 
-    // 4. Ensure payment and order match.
-    if (
-      payment.order_id !== order.id ||
-      order.id !== orderId
-    ) {
+    if (payment.order_id !== order.id || order.id !== orderId) {
       return json({
         verified: false,
         error: "The payment does not match this order."
       }, 400);
     }
 
-    // 5. Confirm amount and currency against the original order.
     if (
       !Number.isSafeInteger(payment.amount) ||
       !Number.isSafeInteger(order.amount) ||
@@ -151,7 +231,6 @@ export async function onRequestPost({ request, env }) {
       }, 400);
     }
 
-    // 6. Only a captured payment counts as a completed payment.
     if (payment.status !== "captured") {
       return json({
         verified: false,
@@ -164,7 +243,6 @@ export async function onRequestPost({ request, env }) {
       }, 409);
     }
 
-    // 7. Confirm Razorpay considers the order paid.
     if (order.status !== "paid") {
       return json({
         verified: false,
@@ -172,17 +250,34 @@ export async function onRequestPost({ request, env }) {
       }, 409);
     }
 
-    // 8. Return verified payment details to the checkout page.
+    // Payment is verified. Email failure must not falsely reject payment.
+    let emailSent = false;
+    let emailError = null;
+    let emailId = null;
+
+    try {
+      emailId = await sendOrderEmail(env, order, payment);
+      emailSent = true;
+    } catch (error) {
+      emailError = String(error?.message || "Unknown email error");
+      console.error("Bebehug order email failed:", emailError);
+    }
+
     return json({
       verified: true,
       status: "captured",
       paymentId: payment.id,
       orderId: order.id,
       amount: payment.amount,
-      currency: payment.currency
+      currency: payment.currency,
+      emailSent,
+      emailId,
+      emailError
     });
 
   } catch (error) {
+    console.error("Payment verification error:", error);
+
     return json({
       verified: false,
       error: "Could not verify the payment. Please contact support."
