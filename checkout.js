@@ -1,6 +1,6 @@
 
 const CART_KEY = "drbohrras_baby_cart_v1";
-const CONFIRMATION_KEY = "bebehug_last_paid_order";
+const CONFIRMED_ORDER_KEY = "bebehug_confirmed_order_id";
 
 let cart = [];
 
@@ -22,7 +22,6 @@ function escapeHTML(value) {
 function showMessage(message) {
   const box = $("checkout-message");
   if (box) box.textContent = message;
-  else if (message) console.log(message);
 }
 
 function loadCart() {
@@ -33,7 +32,8 @@ function loadCart() {
     cart = Array.isArray(parsed)
       ? parsed.filter(item =>
           item &&
-          item.name &&
+          typeof item.name === "string" &&
+          Number.isFinite(Number(item.price)) &&
           Number(item.price) > 0 &&
           Number.isFinite(Number(item.qty)) &&
           Number(item.qty) > 0
@@ -45,7 +45,11 @@ function loadCart() {
 }
 
 function saveCart() {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  try {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  } catch (error) {
+    showMessage("Unable to update your cart. Please refresh the page.");
+  }
 }
 
 function subtotal() {
@@ -74,11 +78,16 @@ function render() {
             Qty ${Number(item.qty)}
           </small>
         </div>
+
         <strong>
           ${money(Number(item.price) * Number(item.qty))}
         </strong>
-        <button type="button" data-remove="${index}"
-          aria-label="Remove item">×</button>
+
+        <button
+          type="button"
+          data-remove="${index}"
+          aria-label="Remove item"
+        >×</button>
       </div>
     `).join("");
 
@@ -87,6 +96,7 @@ function render() {
         cart.splice(Number(button.dataset.remove), 1);
         saveCart();
         render();
+        showMessage("Cart updated.");
       });
     });
   }
@@ -108,12 +118,12 @@ function render() {
 
 function getCustomer() {
   return {
-    name: $("customer-name").value.trim(),
-    phone: $("customer-phone").value.trim(),
-    email: $("customer-email").value.trim(),
-    address: $("customer-address").value.trim(),
-    city: $("customer-city").value.trim(),
-    pin: $("customer-pin").value.trim()
+    name: $("customer-name")?.value.trim() || "",
+    phone: $("customer-phone")?.value.trim() || "",
+    email: $("customer-email")?.value.trim() || "",
+    address: $("customer-address")?.value.trim() || "",
+    city: $("customer-city")?.value.trim() || "",
+    pin: $("customer-pin")?.value.trim() || ""
   };
 }
 
@@ -121,6 +131,26 @@ function orderLines() {
   return cart.map(item =>
     `• ${item.name} | ${item.size || ""} | ${item.colour || ""} | Qty ${item.qty} | ${money(Number(item.price) * Number(item.qty))}`
   ).join("\n");
+}
+
+function validateCart() {
+  if (!cart.length) {
+    showMessage(
+      "Your cart is empty. Please return to the shop and add products."
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function validateForm(form) {
+  if (!form) {
+    showMessage("The checkout form could not be found. Please refresh the page.");
+    return false;
+  }
+
+  return form.reportValidity();
 }
 
 // Load and display the cart.
@@ -141,21 +171,15 @@ if (form) {
     loadCart();
     render();
 
-    if (!cart.length) {
-      showMessage(
-        "Your cart is empty. Please return to the shop and add products."
-      );
-      return;
-    }
-
-    if (!form.reportValidity()) return;
+    if (!validateCart()) return;
+    if (!validateForm(form)) return;
 
     const config = window.STORE_CONFIG || {};
     const number = String(config.whatsappNumber || "").replace(/\D/g, "");
 
     if (!number) {
       showMessage(
-        "WhatsApp is not configured. Please contact the store."
+        "WhatsApp is not configured. Please contact the store directly."
       );
       return;
     }
@@ -174,11 +198,20 @@ if (form) {
       `Address: ${customer.address}, ${customer.city} - ${customer.pin}\n\n` +
       `Please confirm availability and next steps.`;
 
-    window.open(
-      `https://wa.me/${number}?text=${encodeURIComponent(message)}`,
+    const whatsappURL =
+      `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+
+    const whatsappWindow = window.open(
+      whatsappURL,
       "_blank",
       "noopener,noreferrer"
     );
+
+    if (!whatsappWindow) {
+      showMessage(
+        "Your browser blocked the WhatsApp window. Please allow pop-ups and try again."
+      );
+    }
   });
 }
 
@@ -186,37 +219,44 @@ if (form) {
 const payButton = $("pay-online");
 
 if (payButton) {
+  const originalButtonText =
+    payButton.textContent.trim() || "Pay securely with Razorpay →";
+
   payButton.addEventListener("click", async () => {
+    if (payButton.disabled) return;
+
     loadCart();
     render();
 
-    if (!form || !form.reportValidity()) return;
-
-    if (!cart.length) {
-      showMessage(
-        "Your cart is empty. Please add a product first."
-      );
-      return;
-    }
+    if (!validateCart()) return;
+    if (!validateForm(form)) return;
 
     const config = window.STORE_CONFIG || {};
 
     if (!config.razorpayKeyId) {
       showMessage(
-        "Online payment is not configured. Please use WhatsApp."
+        "Online payment is not configured. Please place your order through WhatsApp."
       );
       return;
     }
 
     if (typeof window.Razorpay !== "function") {
       showMessage(
-        "Razorpay could not load. Refresh the page or use WhatsApp."
+        "Razorpay could not load. Refresh the page or use WhatsApp to place your order."
       );
       return;
     }
 
     const customer = getCustomer();
-    const orderCart = cart.map(item => ({ ...item }));
+
+    // Send a snapshot of the cart. The server validates products and prices.
+    const orderCart = cart.map(item => ({
+      name: item.name,
+      size: item.size,
+      colour: item.colour,
+      price: Number(item.price),
+      qty: Number(item.qty)
+    }));
 
     payButton.disabled = true;
     payButton.textContent = "Connecting securely…";
@@ -225,16 +265,29 @@ if (payButton) {
     try {
       const response = await fetch("/api/create-order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           cart: orderCart,
           customer
         })
       });
 
-      const order = await response.json();
+      let order;
 
-      if (!response.ok || !order.orderId || !order.amount) {
+      try {
+        order = await response.json();
+      } catch {
+        throw new Error("The server returned an invalid response. Please try again.");
+      }
+
+      if (
+        !response.ok ||
+        !order.orderId ||
+        !order.amount ||
+        !order.keyId
+      ) {
         throw new Error(
           order.error || "Could not create the payment order."
         );
@@ -268,8 +321,9 @@ if (payButton) {
         handler: async function (payment) {
           payButton.disabled = true;
           payButton.textContent = "Verifying payment…";
+
           showMessage(
-            "Verifying your payment securely. Please wait…"
+            "Verifying your payment securely. Please wait and do not close this page."
           );
 
           try {
@@ -281,69 +335,51 @@ if (payButton) {
               body: JSON.stringify(payment)
             });
 
-            const result = await verifyResponse.json();
+            let result;
+
+            try {
+              result = await verifyResponse.json();
+            } catch {
+              throw new Error(
+                "We could not read the verification response. Contact us before paying again."
+              );
+            }
 
             if (!verifyResponse.ok || result.verified !== true) {
               throw new Error(
                 result.error ||
-                "Payment verification is pending."
+                "Payment verification is pending. Please contact us before paying again."
               );
             }
 
-            // Store the confirmation details for the next page.
-            const confirmation = {
-              orderId: result.orderId || order.orderId,
-              paymentId:
-                result.paymentId || payment.razorpay_payment_id,
-              amount: Number(result.amount ?? order.amount),
-              currency: result.currency || "INR",
-
-              customer: {
-                name: customer.name,
-                phone: customer.phone,
-                email: customer.email,
-                address: customer.address,
-                city: customer.city,
-                pin: customer.pin
-              },
-
-              items: orderCart.map(item => ({
-                name: item.name,
-                size: item.size || "",
-                colour: item.colour || "",
-                qty: Number(item.qty),
-                price: Number(item.price)
-              })),
-
-              savedAt: new Date().toISOString()
-            };
+            // Save the verified reference for the confirmation page.
+            const confirmedOrderId =
+              result.orderId || order.orderId;
 
             try {
               sessionStorage.setItem(
-                CONFIRMATION_KEY,
-                JSON.stringify(confirmation)
+                CONFIRMED_ORDER_KEY,
+                confirmedOrderId
               );
-            } catch (storageError) {
-              // If browser storage is unavailable, do not claim
-              // that the confirmation was saved.
-              showMessage(
-                "Payment verified, but order details could not be saved in this browser. Please contact +91 98400 17107 and quote " +
-                confirmation.orderId
-              );
-              payButton.disabled = false;
-              payButton.textContent = "Payment verified";
-              return;
+            } catch (error) {
+              // Continue to the confirmation page even if storage is unavailable.
             }
 
-            // Clear the cart only after verified payment.
-            localStorage.removeItem(CART_KEY);
+            // Clear the cart only after server-side verification succeeds.
+            try {
+              localStorage.removeItem(CART_KEY);
+            } catch (error) {
+              // Payment is already verified; continue to confirmation.
+            }
 
-            // Open the dedicated confirmation page.
-            window.location.href = "order-confirmation.html";
+            cart = [];
+            render();
 
+            // Show the dedicated confirmation page.
+            window.location.href = "/order-confirmation.html";
           } catch (error) {
             showMessage(
-              `${error.message} Do not pay again until payment status is checked. Contact +91 98400 17107.`
+              `${error.message || "Payment verification could not be completed."} Do not pay again until the payment status is checked. Contact +91 98400 17107.`
             );
 
             payButton.disabled = false;
@@ -354,41 +390,37 @@ if (payButton) {
         modal: {
           ondismiss: function () {
             showMessage(
-              "Payment window closed. Check payment status before trying again."
+              "Payment window closed. If you completed payment, contact us to check its status before trying again."
             );
 
             payButton.disabled = false;
-            payButton.textContent =
-              "Pay securely with Razorpay →";
+            payButton.textContent = originalButtonText;
           }
         }
       });
 
       checkout.on("payment.failed", function (result) {
         const description =
-          result.error?.description ||
+          result?.error?.description ||
           "Razorpay reported a payment failure.";
 
         showMessage(
-          `${description} Check your payment status before trying again. Contact +91 98400 17107 for assistance.`
+          `${description} If money was deducted, contact +91 98400 17107 before trying again.`
         );
 
         payButton.disabled = false;
-        payButton.textContent =
-          "Pay securely with Razorpay →";
+        payButton.textContent = originalButtonText;
       });
 
       payButton.textContent = "Opening Razorpay…";
       checkout.open();
-
     } catch (error) {
       showMessage(
-        error.message || "Could not start payment."
+        error.message || "Could not start payment. Please try again."
       );
 
       payButton.disabled = false;
-      payButton.textContent =
-        "Pay securely with Razorpay →";
+      payButton.textContent = originalButtonText;
     }
   });
 }
