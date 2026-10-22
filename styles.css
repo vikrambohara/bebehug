@@ -26,3 +26,20 @@ footer{background:#103e68;border-radius:34px 34px 0 0;padding:38px clamp(18px,5v
 
 /* Bebehug update: galleries, shield logo and policies */
 .brand-logo{width:48px;height:48px;object-fit:contain;flex:0 0 auto}.topbar nav{display:none!important}.detail-thumbs{flex-wrap:wrap;justify-content:center}.detail-thumbs img{max-width:30%;height:76px;object-fit:contain}.footer-policies{grid-column:1/-1}.footer-policies p{color:#d6e7f2;line-height:1.7;font-size:12px}.footer-policies h3{color:#fff;font-size:14px}@media(max-width:760px){.detail-thumbs img{max-width:28%;height:68px}}
+
+/* Cart quantity controls */
+.cart-line{align-items:start}
+.cart-line-info{min-width:0}
+.cart-line-actions{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.quantity-control{display:inline-flex;align-items:center;justify-content:center;gap:0;border:1px solid #dbe5e9;border-radius:22px;overflow:hidden;background:#fff;min-height:34px}
+.quantity-control button{width:34px;height:32px;border:0;background:#f5f9fa;color:#153f56;font-size:21px;line-height:1;cursor:pointer}
+.quantity-control button:hover{background:#e5f1f4}
+.quantity-control span{min-width:28px;text-align:center;font-size:13px;font-weight:800;color:#153f56}
+.remove-item,.checkout-remove{font-size:12px;border:0;background:transparent;color:#a24d4d;cursor:pointer;padding:3px}
+.checkout-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.checkout-item-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:6px}
+.checkout-item-info b{font-size:13px;color:var(--navy)}
+.checkout-item-info small{font-size:11px;color:var(--muted)}
+.checkout-item-info strong{font-size:13px;color:var(--navy)}
+.checkout-item-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+@media(max-width:420px){.cart-drawer{padding:18px}.cart-line{grid-template-columns:minmax(0,1fr) auto}.quantity-control button{width:30px}.quantity-control span{min-width:24px}}

@@ -1,6 +1,7 @@
 const CART_KEY = "drbohrras_baby_cart_v1";
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); } catch (e) { cart = []; }
+cart = cart.filter(item => item && typeof item === "object").map(item => ({ ...item, price: Number(item.price) || 0, qty: Math.max(1, parseInt(item.qty, 10) || 1) }));
 const $ = id => document.getElementById(id);
 const subtotal = () => cart.reduce((sum, item) => sum + Number(item.price) * Number(item.qty), 0);
 const money = value => "₹" + Number(value).toLocaleString("en-IN");
@@ -11,10 +12,11 @@ function render() {
     $("checkout-subtotal").textContent = money(0); $("checkout-total").textContent = money(0);
     return;
   }
-  box.innerHTML = cart.map((item, i) => `<div class="checkout-item"><div><b>${item.name}</b><small>${item.size} · ${item.colour} · Qty ${item.qty}</small></div><strong>${money(item.price * item.qty)}</strong><button type="button" data-remove="${i}" aria-label="Remove item">×</button></div>`).join("");
+  box.innerHTML = cart.map((item, i) => `<div class="checkout-item"><div class="checkout-item-info"><b>${item.name}</b><small>${item.size} · ${item.colour}</small><strong>${money(item.price * item.qty)}</strong></div><div class="checkout-item-actions"><div class="quantity-control" aria-label="Change quantity"><button type="button" data-qty-change="-1" data-index="${i}" aria-label="Decrease quantity">−</button><span>${item.qty}</span><button type="button" data-qty-change="1" data-index="${i}" aria-label="Increase quantity">+</button></div><button type="button" class="checkout-remove" data-remove="${i}" aria-label="Remove item">Remove</button></div></div>`).join("");
   $("checkout-subtotal").textContent = money(subtotal());
   $("checkout-total").textContent = money(subtotal()); // Delivery is free.
-  document.querySelectorAll("[data-remove]").forEach(button => button.addEventListener("click", () => { cart.splice(Number(button.dataset.remove), 1); localStorage.setItem(CART_KEY, JSON.stringify(cart)); render(); }));
+  box.querySelectorAll("[data-qty-change]").forEach(button => button.addEventListener("click", () => { const index = Number(button.dataset.index); const delta = Number(button.dataset.qtyChange); if (!cart[index]) return; cart[index].qty = Math.max(1, (parseInt(cart[index].qty, 10) || 1) + delta); localStorage.setItem(CART_KEY, JSON.stringify(cart)); render(); }));
+  box.querySelectorAll("[data-remove]").forEach(button => button.addEventListener("click", () => { cart.splice(Number(button.dataset.remove), 1); localStorage.setItem(CART_KEY, JSON.stringify(cart)); render(); }));
 }
 render();
 if (new URLSearchParams(location.search).get("added")) $("checkout-message").textContent = "Added to your cart. Free delivery on every order.";
