@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,27 +7,19 @@
 <meta name="theme-color" content="#fff7f0">
 <title>Dr.Bohrras Baby Care | Feel Dry & Magic Mat</title>
 <link rel="stylesheet" href="styles.css">
+<style>.brand-logo{width:48px;height:48px;object-fit:contain;border-radius:50%;background:#fff;flex:0 0 auto}.topbar nav{display:none!important}.topbar{gap:14px}.topbar .brand{margin-right:auto}.hero-notes{display:grid;grid-template-columns:repeat(2,minmax(0,max-content));align-items:center;gap:10px 22px}.trust-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center}.trust-item{min-width:0;align-items:center}.product-image{height:auto;min-height:245px;padding:14px;display:flex;flex-direction:column;gap:10px}.product-main-photo{width:100%;height:200px;object-fit:contain!important;background:transparent}.product-photo-thumbs{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}.product-photo-thumbs img{width:62px;height:58px;object-fit:contain;background:#fff;border:1px solid #e9edf0;border-radius:8px;padding:3px;mix-blend-mode:normal!important}.customer-reviews{padding:48px 20px;background:#fff8f3}.reviews-inner{max-width:1100px;margin:auto}.reviews-heading{text-align:center;margin-bottom:30px}.reviews-heading h2{font:800 clamp(27px,4vw,36px) Manrope;color:#49372f;margin:10px 0}.reviews-heading p{color:#6d625d}.reviews-inner h3{color:#49372f;margin:28px 0 14px}.review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.review-card{background:#fff;border:1px solid #f0e2d9;border-radius:14px;padding:19px;box-shadow:0 6px 18px #49372f08}.review-stars{color:#e87500;font-size:20px;letter-spacing:1px}.review-card h4{margin:10px 0 7px;color:#49372f}.review-card p{line-height:1.65;color:#574e49}.review-card small{color:#7b706b}.review-note{font-size:12px;text-align:center;color:#6d625d;margin:22px 0 0}.footer-policies{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid #ffffff35;padding-top:20px;margin-top:8px}.footer-policies h3{font-size:14px;margin:0 0 8px}.footer-policies p{margin:0}.copyright{grid-column:1/-1}@media(max-width:1050px){.trust-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.brand-logo{width:43px;height:43px}.hero-notes{grid-template-columns:1fr;gap:7px}.product-image{min-height:0}.product-main-photo{height:190px}.product-photo-thumbs img{width:55px;height:52px}.footer-policies{grid-template-columns:1fr}.reviews-inner h3{font-size:18px}}</style>
 </head>
 
 <body>
 
 <header class="topbar">
   <a class="brand" href="#home" aria-label="Dr.Bohrras Baby Care home">
-    <span class="brand-mark" aria-hidden="true">♡</span>
+    <img class="brand-logo" src="assets/drbohrras-logo.png" alt="Dr.Bohrras shield logo">
     <span>
       <strong>Dr.Bohrras</strong>
       <small>B A B Y&nbsp; C A R E</small>
     </span>
   </a>
-
-  <nav aria-label="Main navigation">
-    <a href="#home">Home</a>
-    <a href="#feel-dry">Feel Dry Sheets</a>
-    <a href="#rubber-sheet">Baby Rubber Sheet</a>
-    <a href="#magic-mat">Magic Mat</a>
-    <a href="#why-us">Our Promise</a>
-  </nav>
-
   <a class="checkout-link" href="checkout.html">Checkout</a>
 
   <button class="cart-button" id="cart-open" type="button">
@@ -56,8 +47,8 @@
     </a>
 
     <div class="hero-notes">
-      <span>♡ Easy-care essentials</span>
-      <span>✦ Sizes for your needs</span>
+      <span>✓ Free delivery within India</span>
+      <span>✦ Delivery in 3–5 working days</span>
     </div>
 
     <span class="hero-doodle doodle-heart">♡</span>
@@ -127,8 +118,8 @@
     <article class="product-card feel-card" id="feel-dry">
 
       <div class="product-image cream-bg">
-        <img src="assets/feel-dry.jpg"
-             alt="Dr. Bohrras Feel Dry washable quick-drying sheet">
+        <img class="product-main-photo" src="assets/feel-dry.jpg" alt="Dr. Bohrras Feel Dry washable quick-drying sheet">
+        <div class="product-photo-thumbs" aria-label="More Feel Dry product photos"><img src="assets/feel-dry-lifestyle.jpg" alt="Feel Dry lifestyle photo"><img src="assets/feel-dry-pink.jpg" alt="Feel Dry pink sheet photo"><img src="assets/feel-dry-promo.png" alt="Feel Dry promotional photo"><img src="assets/feel-dry-extra.png" alt="Feel Dry additional product photo"></div>
       </div>
 
       <div class="product-info">
@@ -190,8 +181,8 @@
     <article class="product-card rubber-card" id="rubber-sheet">
 
       <div class="product-image blue-bg">
-        <img src="assets/baby-rubber-sheet.png"
-             alt="Double colour pink and blue sterilizable rubber sheet">
+        <img class="product-main-photo" src="assets/baby-rubber-sheet.png" alt="Double colour pink and blue sterilizable rubber sheet">
+        <div class="product-photo-thumbs" aria-label="More double colour rubber sheet photos"><img src="assets/double-rubber-lifestyle.png" alt="Double colour rubber sheet lifestyle photo"><img src="assets/double-rubber-detail.jpeg" alt="Double colour rubber sheet detail photo"><img src="assets/double-rubber-extra.png" alt="Double colour rubber sheet additional photo"></div>
       </div>
 
       <div class="product-info">
@@ -213,7 +204,7 @@
         </select>
 
         <div class="price-row">
-          <span class="price" id="rubber-price">₹450</span>
+          <span class="price" id="rubber-price">₹400</span>
           <span class="muted">Double colour: pink and blue</span>
         </div>
 
@@ -242,10 +233,8 @@
     <article class="product-card magic-card" id="magic-mat">
 
       <div class="product-image peach-bg magic-pair">
-        <img src="assets/magic-mat-pink.jpeg"
-             alt="Pink printed Magic Mat Baby">
-        <img src="assets/magic-mat-blue.jpeg"
-             alt="Blue printed Magic Mat Baby">
+        <img class="product-main-photo" src="assets/magic-mat-pink.jpeg" alt="Pink printed Magic Mat Baby">
+        <div class="product-photo-thumbs" aria-label="More Magic Mat product photos"><img src="assets/magic-mat-blue.jpeg" alt="Blue printed Magic Mat Baby"><img src="assets/magic-mat-extra-1.jpeg" alt="Magic Mat additional photo"><img src="assets/magic-mat-extra-2.jpeg" alt="Magic Mat additional photo"><img src="assets/magic-mat-product-info-1.png" alt="Magic Mat product information photo"><img src="assets/magic-mat-product-info-2.png" alt="Magic Mat product information photo"></div>
       </div>
 
       <div class="product-info">
@@ -276,7 +265,7 @@
                min="1" step="1" value="1" inputmode="numeric">
 
         <div class="price-row">
-          <span class="price" id="magic-price">₹350</span>
+          <span class="price" id="magic-price">₹300</span>
           <span class="muted">Price varies by size</span>
         </div>
 
@@ -298,6 +287,8 @@
 
   </div>
 </main>
+
+<section id="customer-reviews" class="customer-reviews"><div class="reviews-inner"><div class="reviews-heading"><span class="eyebrow">CUSTOMER FEEDBACK</span><h2>Kind words from customers</h2><p>Selected feedback shared by customers about our baby-care products.</p></div><h3>Double Colour Sterilizable Rubber Sheet</h3><div class="review-grid"><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Soft and good quality</h4><p>“Nice soft real good quality.”</p><small>Customer review · August 2025</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Very nice and soft</h4><p>“Very nice &amp; soft.”</p><small>Customer review · April 2025</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Good quality for the price</h4><p>“Good quality for the price.”</p><small>Customer review · July 2024</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Good durability</h4><p>“Good durability...no colour fade...value for money good for babies...”</p><small>Customer review · October 2024</small></article></div><h3>Magic Mat Printed Sterilizable Rubber Sheet</h3><div class="review-grid"><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Soft and as described</h4><p>“Very soft and as per the description.”</p><small>Customer review · May 2024</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Comfortable for my baby</h4><p>“I am so happy my baby also feels so comfortable on this sheet.”</p><small>Customer review · May 2025</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Worth buying</h4><p>“Really worth.”</p><small>Customer review · July 2024</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Good quality and soft</h4><p>“Good quality and soft rubber sheet. I like it.”</p><small>Customer review · October 2024</small></article></div><p class="review-note">Selected customer feedback; individual experiences may vary.</p></div></section>
 
 <section class="why-panel">
   <div class="why-copy">
@@ -351,11 +342,15 @@
     <a href="#shop">Shop products</a>
     <a href="checkout.html">Checkout</a>
 
-    <a href="https://www.medical-disposable.com/"
-       target="_blank" rel="noreferrer">Company website</a>
+    <a href="#return-policy">Return Policy</a>
+    <a href="#privacy-policy">Privacy Policy</a>
+    <a href="https://www.medical-disposable.com/" target="_blank" rel="noreferrer">Company website</a>
 
     <b>Office address</b>
     <span>Boharras Inc., No. 309, Mint Street, Chennai - 600003, Tamil Nadu, India</span>
+
+    <b>Delivery</b>
+    <span>Free delivery within India. Estimated delivery: 3–5 working days.</span>
 
     <b>Call / WhatsApp</b>
     <a href="tel:+919840017107">+91 98400 17107</a>
@@ -364,9 +359,8 @@
        target="_blank" rel="noreferrer">Chat with us on WhatsApp ↗</a>
   </div>
 
-  <p class="copyright">
-    © <span id="year"></span> Dr.Bohrras Bio Healthcare. All rights reserved.
-  </p>
+  <section class="footer-policies" aria-label="Website policies"><div id="return-policy"><h3>Return Policy</h3><p>We don’t accept returns. Please check your selected product, size and colour carefully before placing an order. If your order arrives damaged or you need assistance, contact us.</p></div><div id="privacy-policy"><h3>Privacy Policy</h3><p>We use the contact and delivery details you provide to process your order, arrange delivery and contact you about your purchase. We do not display your personal information publicly. For privacy questions, contact us using the details above.</p></div></section>
+  <p class="copyright">© <span id="year"></span> Dr.Bohrras Bio Healthcare. All rights reserved.</p>
 </footer>
 
 <div class="drawer-backdrop" id="backdrop"></div>
@@ -395,9 +389,8 @@
       Shipping and final payment details will be shown during checkout.
     </p>
 
-    <a href="checkout.html" class="primary-btn full">
-      Proceed to checkout
-    </a>
+    <a href="checkout.html" class="primary-btn full">Proceed to checkout</a>
+    <button id="whatsapp-order" class="detail-btn" type="button">Order through WhatsApp</button>
   </div>
 </aside>
 
@@ -413,4 +406,3 @@
 
 </body>
 </html>
-```
