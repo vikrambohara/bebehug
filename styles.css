@@ -43,3 +43,6 @@ footer{background:#103e68;border-radius:34px 34px 0 0;padding:38px clamp(18px,5v
 .checkout-item-info strong{font-size:13px;color:var(--navy)}
 .checkout-item-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 @media(max-width:420px){.cart-drawer{padding:18px}.cart-line{grid-template-columns:minmax(0,1fr) auto}.quantity-control button{width:30px}.quantity-control span{min-width:24px}}
+
+/* Hide the oversized Remove control on the checkout page. */
+.checkout-remove{display:none!important}
