@@ -37,11 +37,17 @@
       <small>B A B Y&nbsp; C A R E</small>
     </span>
   </a>
+  <nav class="home-nav" aria-label="Main navigation">
+    <a href="#shop">Shop</a>
+    <a href="#product-comparison">Compare products</a>
+    <a href="baby-rubber-sheet-guide.html">Buying guide</a>
+    <a href="contact-us.html">Help</a>
+  </nav>
   <a class="checkout-link" href="checkout.html">Checkout</a>
 
   <button class="cart-button" id="cart-open" type="button">
     <span class="cart-icon">🛒</span>
-    Cart <span id="cart-count">0</span>
+    Cart <span id="cart-count" aria-live="polite" aria-atomic="true">0</span>
   </button>
 </header>
 
@@ -170,7 +176,7 @@
 
         <label for="feel-qty">Quantity (pieces)</label>
         <input id="feel-qty" type="number"
-               min="1" step="1" value="1" inputmode="numeric">
+               min="1" max="50" step="1" value="1" inputmode="numeric" aria-label="Feel Dry quantity in pieces">
 
         <div class="price-row">
           <span class="price" id="feel-price">₹165</span>
@@ -227,7 +233,7 @@
 
         <label for="rubber-qty">Quantity (pieces)</label>
         <input id="rubber-qty" type="number"
-               min="1" step="1" value="1" inputmode="numeric">
+               min="1" max="50" step="1" value="1" inputmode="numeric" aria-label="Double Colour Rubber Sheet quantity in pieces">
 
         <a class="detail-btn" href="double-colour-rubber-sheet.html">
           View product details ↗
@@ -279,7 +285,7 @@
 
         <label for="magic-qty">Quantity (pieces)</label>
         <input id="magic-qty" type="number"
-               min="1" step="1" value="1" inputmode="numeric">
+               min="1" max="50" step="1" value="1" inputmode="numeric" aria-label="Magic Mat quantity in pieces">
 
         <div class="price-row">
           <span class="price" id="magic-price">₹300</span>
@@ -305,6 +311,26 @@
   </div>
 </main>
 
+<section class="comparison-section" id="product-comparison" aria-labelledby="comparison-title">
+  <div class="comparison-heading">
+    <span class="eyebrow">FIND YOUR BEST FIT</span>
+    <h2 id="comparison-title">Compare our products</h2>
+    <p>See the surface type, available sizes and starting prices side by side. Open a product page for full details before ordering.</p>
+  </div>
+  <div class="comparison-table-wrap" role="region" aria-label="Product comparison table" tabindex="0">
+    <table class="comparison-table">
+      <thead><tr><th scope="col">Product</th><th scope="col">Product type</th><th scope="col">Available sizes</th><th scope="col">Price range</th><th scope="col">Explore</th></tr></thead>
+      <tbody>
+        <tr><th scope="row"><a href="feel-dry.html">Feel Dry</a></th><td>Wicking polar-fleece top with bonded TPU waterproof backing</td><td>S, M, L, XL</td><td>₹165–₹1,200</td><td><a class="table-action" href="feel-dry.html">View details →</a></td></tr>
+        <tr><th scope="row"><a href="double-colour-rubber-sheet.html">Double Colour Rubber Sheet</a></th><td>Reusable pink-and-blue double-colour sheet</td><td>90 × 100, 90 × 200, 90 × 300 cm</td><td>₹400–₹900</td><td><a class="table-action" href="double-colour-rubber-sheet.html">View details →</a></td></tr>
+        <tr><th scope="row"><a href="magic-mat.html">Magic Mat</a></th><td>Reusable printed rubber sheet</td><td>90 × 90, 90 × 180 cm</td><td>₹300–₹500</td><td><a class="table-action" href="magic-mat.html">View details →</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="comparison-footnote">Prices are per piece and shown in INR. The selected size and quantity determine your product subtotal; check the checkout summary before payment.</p>
+  <a class="comparison-guide-link" href="baby-rubber-sheet-guide.html">Not sure which type to choose? Read our buying guide →</a>
+</section>
+
 <section class="seo-guide" aria-labelledby="seo-guide-title">
   <h2 id="seo-guide-title">Baby Rubber Sheets &amp; Washable Mattress Protectors</h2>
   <p>Bebehug brings together practical bed-protection products from Dr.Bohrras Baby Care. Compare sizes, colours and prices before choosing a reusable sheet for your home.</p>
@@ -329,6 +355,22 @@
 </section>
 
 <section id="customer-reviews" class="customer-reviews"><div class="reviews-inner"><h3>Double Colour Sterilizable Rubber Sheet</h3><div class="review-grid"><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Soft and good quality</h4><p>“Nice soft real good quality.”</p><small>Customer review · August 2025</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Very nice and soft</h4><p>“Very nice &amp; soft.”</p><small>Customer review · April 2025</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Good quality for the price</h4><p>“Good quality for the price.”</p><small>Customer review · July 2024</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Good durability</h4><p>“Good durability...no colour fade...value for money good for babies...”</p><small>Customer review · October 2024</small></article></div><h3>Magic Mat Printed Sterilizable Rubber Sheet</h3><div class="review-grid"><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Soft and as described</h4><p>“Very soft and as per the description.”</p><small>Customer review · May 2024</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Comfortable for my baby</h4><p>“I am so happy my baby also feels so comfortable on this sheet.”</p><small>Customer review · May 2025</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Worth buying</h4><p>“Really worth.”</p><small>Customer review · July 2024</small></article><article class="review-card"><div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div><h4>Good quality and soft</h4><p>“Good quality and soft rubber sheet. I like it.”</p><small>Customer review · October 2024</small></article></div></div></section>
+
+
+<section class="faq-section" id="frequently-asked-questions" aria-labelledby="faq-title">
+  <div class="faq-heading">
+    <span class="eyebrow">A LITTLE HELP</span>
+    <h2 id="faq-title">Frequently asked questions</h2>
+    <p>Quick answers to common questions before you choose a product.</p>
+  </div>
+  <div class="faq-list">
+    <details><summary>How do I choose the right size?</summary><p>Measure the area you want to cover and compare it with the dimensions shown on the individual product page. If you are unsure, contact us before ordering.</p></details>
+    <details><summary>What is the difference between Feel Dry and the rubber sheets?</summary><p>Feel Dry has a soft polar-fleece top with wicking treatment and a bonded TPU waterproof backing. The Double Colour sheet has a pink-and-blue double-colour design, while Magic Mat is a printed rubber sheet. Read each product description and care instructions to compare them.</p></details>
+    <details><summary>How much is delivery?</summary><p>The website currently offers free delivery within India, subject to serviceability. The estimated delivery window is 3–5 working days; delivery timing can vary by destination.</p></details>
+    <details><summary>Can I ask for help before ordering?</summary><p>Yes. Contact our team at <a href="mailto:sales.dbbh@gmail.com">sales.dbbh@gmail.com</a> or through <a href="contact-us.html">Contact Us</a> before placing your order.</p></details>
+    <details><summary>How do I care for my sheet?</summary><p>Care requirements differ by product. Follow the care instructions supplied with the exact product you purchase, rather than assuming the same washing or sterilising method applies to every sheet.</p></details>
+  </div>
+</section>
 
 <section class="why-panel">
   <div class="why-copy">
@@ -412,11 +454,12 @@
 
 <aside class="cart-drawer"
        id="cart-drawer"
+       role="dialog" aria-modal="true" aria-labelledby="cart-heading"
        aria-label="Shopping cart"
        aria-hidden="true">
 
   <div class="drawer-head">
-    <h2>Your cart</h2>
+    <h2 id="cart-heading">Your cart</h2>
     <button id="cart-close" type="button" aria-label="Close cart">✕</button>
   </div>
 
