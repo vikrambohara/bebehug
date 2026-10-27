@@ -1,105 +1,113 @@
 (() => {
-  function setupGallery() {
-    document.querySelectorAll('.product-image, .detail-visual').forEach(gallery => {
-      const main = gallery.querySelector('.product-main-photo, #main-product-image');
-      if (!main || main.dataset.galleryReady === "true") return;
-      const thumbs = Array.from(gallery.querySelectorAll('.product-photo-thumbs img, .detail-thumbs img'));
+  const resolveUrl = value => {
+    try { return new URL(value, document.baseURI).href; }
+    catch (error) { return value || ""; }
+  };
 
-      // Remember the last known-good main image so an invalid thumbnail never blanks the gallery.
-      const initialSrc = main.getAttribute("src") || "";
-      let lastGoodSrc = initialSrc;
-      let lastGoodAlt = main.alt || "Product photo";
+  function setupGallery() {
+    document.querySelectorAll(".product-image, .detail-visual").forEach(gallery => {
+      const main = gallery.querySelector(".product-main-photo, #main-product-image");
+      if (!main || main.dataset.galleryReady === "true") return;
       main.dataset.galleryReady = "true";
 
-      const setActiveThumb = (src) => {
-        thumbs.forEach(thumb => {
-          const thumbSrc = new URL(thumb.getAttribute("src") || "", document.baseURI).href;
-          const active = thumbSrc === src;
-          thumb.classList.toggle("gallery-thumb-active", active);
-          thumb.setAttribute("aria-pressed", active ? "true" : "false");
-          const button = thumb.closest("button.gallery-thumb");
-          if (button) {
-            button.classList.toggle("is-active", active);
-            if (active) button.setAttribute("aria-current", "true");
-            else button.removeAttribute("aria-current");
-          }
+      const thumbButtons = Array.from(gallery.querySelectorAll(".product-photo-thumbs .gallery-thumb, .detail-thumbs .gallery-thumb"));
+      let lastGoodSrc = resolveUrl(main.getAttribute("src") || main.src);
+      let lastGoodAlt = main.alt || "Product photo";
+      let requestNumber = 0;
+
+      const paintMain = (src, alt) => {
+        main.removeAttribute("srcset");
+        main.removeAttribute("sizes");
+        main.src = src;
+        main.alt = alt || "Product photo";
+        main.style.display = "block";
+        main.style.visibility = "visible";
+        main.style.opacity = "1";
+        main.style.objectFit = "contain";
+        main.classList.remove("gallery-image-error");
+      };
+
+      const updateActive = activeSrc => {
+        thumbButtons.forEach(button => {
+          const img = button.querySelector("img");
+          const active = !!img && resolveUrl(img.getAttribute("src") || img.src) === activeSrc;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+          if (active) button.setAttribute("aria-current", "true");
+          else button.removeAttribute("aria-current");
         });
       };
 
-      const activate = (thumb) => {
-        const rawSrc = thumb.getAttribute("src");
-        if (!rawSrc) return;
-        const targetSrc = new URL(rawSrc, document.baseURI).href;
-        if (targetSrc === new URL(lastGoodSrc, document.baseURI).href) {
-          setActiveThumb(targetSrc);
-          return;
+      const reportFailure = () => {
+        let status = gallery.querySelector(".gallery-status");
+        if (!status) {
+          status = document.createElement("p");
+          status.className = "gallery-status";
+          status.setAttribute("role", "status");
+          status.setAttribute("aria-live", "polite");
+          gallery.appendChild(status);
         }
-
-        // Preload before swapping the image. Keep the current main image while loading.
-        const candidate = new Image();
-        candidate.onload = () => {
-          main.src = targetSrc;
-          main.alt = thumb.alt || "Product photo";
-          main.classList.remove("gallery-image-error");
-          lastGoodSrc = targetSrc;
-          lastGoodAlt = main.alt;
-          setActiveThumb(targetSrc);
-        };
-        candidate.onerror = () => {
-          // Keep the last good image visible and tell assistive technology what happened.
-          main.src = lastGoodSrc;
-          main.alt = lastGoodAlt;
-          let status = gallery.querySelector(".gallery-status");
-          if (!status) {
-            status = document.createElement("p");
-            status.className = "gallery-status";
-            status.setAttribute("role", "status");
-            status.setAttribute("aria-live", "polite");
-            gallery.appendChild(status);
-          }
-          status.textContent = "This photo could not be loaded. The previous product image is still displayed.";
-        };
-        candidate.src = targetSrc;
+        status.textContent = "That photo could not be loaded. The previous image is still displayed.";
       };
 
-      thumbs.forEach(thumb => {
-        thumb.style.cursor = "pointer";
-        thumb.tabIndex = thumb.closest("button") ? -1 : 0;
-        if (!thumb.closest("button")) {
-          thumb.setAttribute("role", "button");
-          thumb.setAttribute("aria-label", "Show image: " + (thumb.alt || "product photo"));
-        }
-        thumb.addEventListener("click", event => {
+      // Keep the main image at a stable size and make sure the default is the same on both pages.
+      paintMain(lastGoodSrc, lastGoodAlt);
+      updateActive(lastGoodSrc);
+
+      thumbButtons.forEach(button => {
+        const img = button.querySelector("img");
+        if (!img) return;
+        button.type = "button";
+        button.setAttribute("aria-label", "Show image: " + (img.alt || "product photo"));
+        button.setAttribute("aria-pressed", resolveUrl(img.getAttribute("src") || img.src) === lastGoodSrc ? "true" : "false");
+        img.addEventListener("error", () => button.classList.add("gallery-thumb-error"), { once: true });
+
+        button.addEventListener("click", event => {
           event.preventDefault();
-          activate(thumb);
+          const source = img.getAttribute("src");
+          if (!source) return;
+          const targetSrc = resolveUrl(source);
+          const thisRequest = ++requestNumber;
+          if (targetSrc === lastGoodSrc) {
+            updateActive(lastGoodSrc);
+            return;
+          }
+
+          // Preload the new image; never clear the visible main image while it loads.
+          const candidate = new Image();
+          candidate.onload = () => {
+            if (thisRequest !== requestNumber) return;
+            paintMain(targetSrc, img.alt || "Product photo");
+            lastGoodSrc = targetSrc;
+            lastGoodAlt = img.alt || "Product photo";
+            updateActive(lastGoodSrc);
+            const status = gallery.querySelector(".gallery-status");
+            if (status) status.remove();
+          };
+          candidate.onerror = () => {
+            if (thisRequest !== requestNumber) return;
+            paintMain(lastGoodSrc, lastGoodAlt);
+            updateActive(lastGoodSrc);
+            reportFailure();
+          };
+          candidate.src = targetSrc;
         });
-        if (!thumb.closest("button")) {
-          thumb.addEventListener("keydown", event => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              activate(thumb);
-            }
-          });
-        }
-        thumb.addEventListener("error", () => thumb.classList.add("gallery-thumb-error"), { once: true });
       });
 
       main.addEventListener("error", () => {
-        if (lastGoodSrc && main.src !== lastGoodSrc) {
-          main.src = lastGoodSrc;
-          main.alt = lastGoodAlt;
-        }
+        const failedSrc = resolveUrl(main.getAttribute("src") || main.src);
+        if (lastGoodSrc && failedSrc !== lastGoodSrc) paintMain(lastGoodSrc, lastGoodAlt);
       });
 
       main.style.cursor = "zoom-in";
       main.tabIndex = 0;
       main.setAttribute("role", "button");
       main.setAttribute("aria-label", "Open larger product image");
-      main.addEventListener("click", () => openLightbox(main.currentSrc || main.src, main.alt));
+      main.addEventListener("click", () => openLightbox(resolveUrl(main.getAttribute("src") || main.src), main.alt));
       main.addEventListener("keydown", event => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          openLightbox(main.currentSrc || main.src, main.alt);
+          openLightbox(resolveUrl(main.getAttribute("src") || main.src), main.alt);
         }
       });
     });
