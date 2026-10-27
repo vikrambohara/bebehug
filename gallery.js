@@ -10,7 +10,20 @@
       if (!main || main.dataset.galleryReady === "true") return;
       main.dataset.galleryReady = "true";
 
-      const thumbButtons = Array.from(gallery.querySelectorAll(".product-photo-thumbs .gallery-thumb, .detail-thumbs .gallery-thumb"));
+      // Normalize every image thumbnail to a real button, including older product pages
+      // that still have plain <img> elements rather than button wrappers.
+      const thumbImages = Array.from(gallery.querySelectorAll(".product-photo-thumbs img, .detail-thumbs img"));
+      const thumbButtons = thumbImages.map(img => {
+        let button = img.closest("button.gallery-thumb");
+        if (!button) {
+          button = document.createElement("button");
+          button.className = "gallery-thumb";
+          button.type = "button";
+          img.parentNode.insertBefore(button, img);
+          button.appendChild(img);
+        }
+        return button;
+      });
       let lastGoodSrc = resolveUrl(main.getAttribute("src") || main.src);
       let lastGoodAlt = main.alt || "Product photo";
       let requestNumber = 0;
