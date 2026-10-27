@@ -44,7 +44,8 @@ function updatePrice(product) {
   if (!select || !price || !prices[product][select.value]) return;
   price.textContent = money(prices[product][select.value]);
 }
-$("year")?.textContent = new Date().getFullYear();
+const yearElement = $("year");
+if (yearElement) yearElement.textContent = new Date().getFullYear();
 ["feel", "rubber", "magic"].forEach(key => {
   const id = { feel: "feel-size", rubber: "rubber-size", magic: "magic-size" }[key];
   const select = $(id);
