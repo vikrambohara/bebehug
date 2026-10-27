@@ -19,7 +19,7 @@ function render() {
   box.querySelectorAll("[data-remove]").forEach(button => button.addEventListener("click", () => { cart.splice(Number(button.dataset.remove), 1); localStorage.setItem(CART_KEY, JSON.stringify(cart)); render(); }));
 }
 render();
-if (new URLSearchParams(location.search).get("added")) $("checkout-message").textContent = "Added to your cart. Free delivery on every order.";
+if (new URLSearchParams(location.search).get("added")) $("checkout-message").textContent = "Added to your cart. Free delivery within India, subject to serviceability.";
 $("checkout-form").addEventListener("submit", event => {
   event.preventDefault();
   if (!cart.length) { alert("Your cart is empty."); return; }
