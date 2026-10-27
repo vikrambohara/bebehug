@@ -246,3 +246,41 @@ button,a,select{touch-action:manipulation}
   line-height:1.5;
   text-align:center;
 }
+
+
+/* Use the same polished thumbnail-button treatment on product detail pages */
+.detail-visual .detail-thumbs .gallery-thumb{
+  display:inline-flex;
+  flex:0 1 28%;
+  align-items:center;
+  justify-content:center;
+  width:28%;
+  height:68px;
+  min-height:68px;
+  padding:4px;
+  border:1px solid #e9edf0;
+  border-radius:12px;
+  background:#fff;
+  cursor:pointer;
+}
+.detail-visual .detail-thumbs .gallery-thumb:hover,
+.detail-visual .detail-thumbs .gallery-thumb.is-active{
+  border-color:#8dcde1;
+}
+.detail-visual .detail-thumbs .gallery-thumb:focus-visible{
+  outline:3px solid #2584b8;
+  outline-offset:2px;
+}
+.detail-visual .detail-thumbs .gallery-thumb > img{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  object-fit:contain;
+  background:transparent;
+  border:0;
+  border-radius:7px;
+  mix-blend-mode:normal!important;
+}
