@@ -46,3 +46,127 @@ footer{background:#103e68;border-radius:34px 34px 0 0;padding:38px clamp(18px,5v
 
 /* Hide the oversized Remove control on the checkout page. */
 .checkout-remove{display:none!important}
+
+
+/* Bebehug all-in-one usability and visual polish */
+:root{--focus-ring:#2584b8}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--focus-ring);outline-offset:3px}
+button,select,input,textarea{font:inherit}
+button,a,select{touch-action:manipulation}
+.home-nav{display:flex;align-items:center;gap:clamp(12px,1.8vw,24px);font-size:12px;font-weight:800;color:#254c6e}
+.home-nav a{white-space:nowrap;transition:color .18s}
+.home-nav a:hover{color:#ec527c}
+.product-info h3 a{color:inherit;text-decoration:none;text-underline-offset:4px}
+.product-info h3 a:hover{text-decoration:underline;text-decoration-color:#ff8daa}
+.product-info select,.product-info input[type=number]{min-height:44px;width:100%;border:1px solid #dce6ec;border-radius:12px;padding:11px 12px;background:#fff;color:#183858;font-size:14px}
+.product-info select:focus,.product-info input[type=number]:focus,.detail-copy select:focus,.detail-copy input:focus{outline:3px solid #ccecf8;outline-offset:1px;border-color:#7fc5dd}
+.product-info input[type=number]{max-width:140px}
+.product-card{height:100%;display:flex;flex-direction:column}
+.product-info{display:flex;flex:1;flex-direction:column}
+.product-info .detail-btn{margin-top:auto;margin-bottom:8px}
+.product-info .price-row{margin-bottom:14px}
+.product-info .add-btn{min-height:46px;background:#103e68;color:#fff;border-radius:24px;transition:transform .16s,background .16s}
+.product-info .add-btn:hover{background:#0b3153;transform:translateY(-1px)}
+.product-info .detail-btn{border-radius:24px;min-height:42px}
+.product-photo-thumbs .gallery-thumb{min-width:45px;min-height:45px}
+.product-photo-thumbs img{transition:border-color .16s,transform .16s}
+.product-photo-thumbs .gallery-thumb:hover img{transform:translateY(-1px);border-color:#b7dcea}
+.hero .primary-btn{border-radius:28px;background:#f34d7d;box-shadow:0 10px 22px #f34d7d23}
+.hero .primary-btn:hover{background:#df386a;transform:translateY(-1px)}
+.trust-item{background:rgba(255,255,255,.72);border:1px solid #f4e8e6;border-radius:17px;padding:14px;min-height:82px}
+.trust-item b{color:#103e68}
+.comparison-section{max-width:1240px;margin:10px auto 36px;padding:42px clamp(18px,5vw,76px) 30px}
+.comparison-heading,.faq-heading{text-align:center;max-width:760px;margin:0 auto 22px}
+.comparison-heading h2,.faq-heading h2{font:800 clamp(25px,3.2vw,36px)/1.15 Manrope,sans-serif;letter-spacing:-1px;color:#103e68;margin:9px 0 10px}
+.comparison-heading p,.faq-heading p{color:#657b8d;font-size:14px;line-height:1.75;margin:0}
+.comparison-table-wrap{overflow-x:auto;border:1px solid #e4edf1;border-radius:18px;background:#fff;box-shadow:0 9px 24px #163f5608}
+.comparison-table{width:100%;min-width:690px;border-collapse:separate;border-spacing:0;font-size:13px}
+.comparison-table th,.comparison-table td{padding:15px 16px;text-align:left;vertical-align:top;border-bottom:1px solid #eaf0f3;line-height:1.65}
+.comparison-table thead th{background:#f1f9fc;color:#103e68;font-weight:800;font-size:12px}
+.comparison-table tbody tr:last-child th,.comparison-table tbody tr:last-child td{border-bottom:0}
+.comparison-table tbody th{font-weight:800;color:#103e68;min-width:150px}
+.comparison-table a{color:#16638b;text-decoration:underline;text-underline-offset:3px}
+.comparison-table .table-action{white-space:nowrap;font-weight:800;text-decoration:none}
+.comparison-table tbody tr:hover{background:#fffafd}
+.comparison-footnote{color:#738795;font-size:11px;line-height:1.7;margin:12px 2px}
+.comparison-guide-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#b63e6a;padding:11px 0}
+.seo-guide{background:linear-gradient(180deg,#fff 0%,#fffafa 100%)}
+.seo-guide .seo-guide-item{box-shadow:0 6px 18px #193f5607;transition:transform .18s,box-shadow .18s}
+.seo-guide .seo-guide-item:hover{transform:translateY(-2px);box-shadow:0 12px 24px #193f5610}
+.faq-section{max-width:1060px;margin:12px auto 60px;padding:35px clamp(18px,5vw,76px)}
+.faq-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.faq-list details{border:1px solid #e6eef1;background:#fff;border-radius:14px;padding:0 17px}
+.faq-list summary{cursor:pointer;list-style:none;padding:17px 26px 17px 0;font-weight:800;font-size:13px;color:#103e68;position:relative}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-list summary:after{content:"+";position:absolute;right:0;top:14px;color:#d94f7b;font-size:22px;font-weight:500}
+.faq-list details[open] summary:after{content:"−"}
+.faq-list details p{font-size:13px;line-height:1.75;color:#657b8d;margin:0 0 17px}
+.faq-list details a{color:#16638b;text-decoration:underline}
+.cart-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:10000;max-width:calc(100vw - 30px);padding:12px 18px;border-radius:24px;background:#123d58;color:#fff;font-size:13px;font-weight:800;box-shadow:0 9px 28px #123d5838}
+.cart-line-actions .quantity-control button:disabled{opacity:.35;cursor:not-allowed}
+.cart-line-actions .remove-item{width:auto;height:auto;border:0;background:transparent;color:#b34e63;font-size:12px;padding:4px 8px;border-radius:8px}
+.cart-line-actions .remove-item:hover{background:#fff0f3}
+.cart-line-actions .remove-item:focus-visible{outline:2px solid #2584b8}
+.detail-cart-count{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;border-radius:50%;background:#ff5c86;color:#fff;margin-left:4px;padding:0 5px;font-size:11px}
+.detail-quantity-row{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:20px}
+.detail-quantity-row label{margin:0!important}
+.detail-quantity-control{display:inline-flex;align-items:center;border:1px solid #dce6ec;border-radius:24px;overflow:hidden;background:#fff;min-height:42px}
+.detail-quantity-control button{border:0;background:#f2f8fb;width:42px;min-height:42px;cursor:pointer;font-size:22px;color:#103e68}
+.detail-quantity-control button:hover{background:#e2f3f9}
+.detail-quantity-control input{width:54px;min-height:42px;border:0!important;border-radius:0!important;text-align:center;padding:7px!important;font-weight:800;color:#103e68}
+.detail-quantity-control input:focus{outline:0!important;background:#f5fbfe}
+.detail-cart-status{padding:12px 14px;border:1px solid #bfe5d4;border-radius:12px;background:#f0fbf5;color:#176342;font-size:13px;line-height:1.6;margin:14px 0 6px}
+.detail-cart-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.detail-cart-actions[hidden],.detail-cart-status[hidden]{display:none!important}
+.detail-cart-actions a{display:flex;justify-content:center;align-items:center;min-height:43px;text-align:center;border-radius:22px;padding:10px 12px;font-size:12px;font-weight:800}
+.detail-cart-actions .go-checkout{background:#103e68;color:#fff}
+.detail-cart-actions .continue-shopping{background:#fff5f8;border:1px solid #f3c9d6;color:#b63e6a}
+.related-products{max-width:1200px;margin:0 auto 48px;padding:8px clamp(18px,5vw,76px) 28px}
+.related-products h2{font:800 clamp(24px,3vw,31px)/1.2 Manrope;color:#103e68;margin:0 0 7px}
+.related-products>p{font-size:13px;color:#657b8d;line-height:1.7;margin:0 0 18px}
+.related-product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.related-product-card{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:16px;border:1px solid #e5edf1;border-radius:17px;padding:14px;background:#fff;transition:transform .18s,box-shadow .18s}
+.related-product-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px #163f5610}
+.related-product-card img{width:100px;height:100px;object-fit:contain;background:#fff5f6;border-radius:12px}
+.related-product-card h3{font:800 15px/1.35 Manrope;color:#103e68;margin:0 0 6px}
+.related-product-card p{font-size:12px;color:#657b8d;line-height:1.6;margin:0 0 7px}
+.related-product-card a{font-size:12px;font-weight:800;color:#b63e6a;text-decoration:underline;text-underline-offset:3px}
+.detail-cart-actions a:hover,.related-product-card a:hover{filter:brightness(.94)}
+.checkout-label{font-size:12px;font-weight:700;color:#567185}
+.checkout-main .section-heading{margin-bottom:26px}
+.payment-note{background:#f2f8fb!important;border-color:#d7eaf2!important}
+.payment-note b{color:#103e68!important}
+.payment-note p{color:#536f81!important}
+.checkout-policy-links{background:#f8fbfd;border-radius:12px;padding:10px 13px}
+.checkout-panel .checkout-remove{display:inline-flex!important;align-items:center;justify-content:center;min-height:30px;width:auto;border-radius:8px;padding:5px 10px;font-size:11px;color:#a74458;background:#fff0f3;white-space:nowrap}
+.checkout-panel .checkout-remove:hover{background:#ffe0e8}
+@media(max-width:1050px){
+ .home-nav{gap:10px;font-size:11px}
+ .comparison-section{padding-top:34px}
+ .comparison-table th,.comparison-table td{padding:12px}
+}
+@media(max-width:760px){
+ .home-nav{display:none}
+ .topbar{gap:9px}
+ .trust-item{align-items:flex-start;flex-direction:row;gap:10px}
+ .comparison-section{padding:30px 15px 24px}
+ .faq-section{padding:22px 15px 34px;margin-bottom:35px}
+ .faq-list{grid-template-columns:1fr}
+ .related-products{padding:8px 15px 25px}
+ .related-product-grid{grid-template-columns:1fr}
+ .related-product-card{grid-template-columns:88px minmax(0,1fr);gap:12px;padding:11px}
+ .related-product-card img{width:88px;height:88px}
+ .detail-cart-actions{grid-template-columns:1fr}
+ .detail-quantity-row{align-items:center}
+ .cart-toast{bottom:84px}
+}
+@media(max-width:420px){
+ .cart-button{font-size:11px;padding:8px 10px}
+ .topbar .checkout-link{font-size:10px;padding:9px 10px}
+ .detail-quantity-control button{width:36px}
+ .detail-quantity-control input{width:45px}
+ .comparison-table{min-width:650px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
