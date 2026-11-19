@@ -53,6 +53,27 @@ if (payButton) payButton.addEventListener("click", async () => {
         const verifyResponse = await fetch("/api/verify-payment", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
         const verification = await verifyResponse.json();
         if (!verifyResponse.ok || !verification.verified) throw new Error(verification.error || "Payment verification is pending.");
+
+        // Meta Purchase is sent only after the server confirms captured and paid status.
+        // Only product/order event data is sent; customer contact and delivery details are excluded.
+        if (typeof window.bebehugTrackMetaEvent === "function") {
+          const purchasedItems = cart.map(item => ({
+            id: String(item.name || "bebehug-product").toLowerCase().includes("feel dry") ? "feel" :
+                String(item.name || "").toLowerCase().includes("double colour") ? "rubber" :
+                String(item.name || "").toLowerCase().includes("magic mat") ? "magic" : "bebehug-product",
+            quantity: Number(item.qty) || 1,
+            item_price: Number(item.price) || 0
+          }));
+          window.bebehugTrackMetaEvent("Purchase", {
+            content_ids: [...new Set(purchasedItems.map(item => item.id))],
+            contents: purchasedItems,
+            content_type: "product",
+            num_items: purchasedItems.reduce((sum, item) => sum + item.quantity, 0),
+            value: Number.isFinite(Number(verification.amount)) ? Number(verification.amount) / 100 : subtotal(),
+            currency: verification.currency || "INR"
+          }, verification.paymentId || verification.orderId);
+        }
+
         localStorage.removeItem(CART_KEY); cart = []; render();
         $("checkout-message").textContent = `Payment verified successfully. Razorpay order: ${verification.orderId}. Please save this reference.`;
       } catch (error) { $("checkout-message").textContent = `${error.message} Do not pay again until our team confirms the status. Contact +91 98400 17107.`; }
