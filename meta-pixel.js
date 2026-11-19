@@ -227,7 +227,7 @@
     Object.assign(title.style, { display: "block", fontSize: "15px", marginBottom: "5px" });
 
     const copy = document.createElement("p");
-    copy.textContent = "Bebehug would like to use optional advertising cookies to measure visits and show relevant Bebehug ads on Facebook and Instagram. You can accept or reject these optional cookies. Read our ";
+    copy.textContent = "With your permission, Bebehug uses Meta Pixel to measure page visits, product views, add-to-cart and checkout actions, and confirmed purchases. Meta may receive product/event details plus browser, device and connection information to measure campaigns and show relevant Bebehug ads on Facebook and Instagram. Accept or reject optional marketing tracking; you can change your choice later in Cookie settings. Read our ";
     Object.assign(copy.style, { margin: "0 0 12px", color: "#536b7d" });
     const privacyLink = document.createElement("a");
     privacyLink.href = "privacy-policy.html";
