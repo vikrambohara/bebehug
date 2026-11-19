@@ -38,6 +38,63 @@
     }
   }
 
+  function productIdForName(name) {
+    const value = String(name || "").toLowerCase();
+    if (value.includes("feel dry")) return "feel";
+    if (value.includes("double colour")) return "rubber";
+    if (value.includes("magic mat")) return "magic";
+    return "bebehug-product";
+  }
+
+  function cartKey(item) {
+    return [item.name || "", item.size || "", item.colour || ""].join("|");
+  }
+
+  function installAddToCartTracking() {
+    let beforeCart = null;
+    let clickedAt = 0;
+
+    // Capture the cart before the store's own click handler runs.
+    document.addEventListener("click", event => {
+      const button = event.target.closest(".product-info .add-btn[data-price-map], #add-detail");
+      if (!button) return;
+      beforeCart = getCart().map(item => ({ ...item }));
+      clickedAt = Date.now();
+    }, true);
+
+    // The page's existing add-to-cart handler runs before this bubbling listener.
+    document.addEventListener("click", event => {
+      const button = event.target.closest(".product-info .add-btn[data-price-map], #add-detail");
+      if (!button || !beforeCart || Date.now() - clickedAt > 3000) return;
+      const afterCart = getCart();
+      const oldByKey = new Map(beforeCart.map(item => [cartKey(item), Number(item.qty) || 0]));
+      const added = afterCart.map(item => {
+        const delta = (Number(item.qty) || 0) - (oldByKey.get(cartKey(item)) || 0);
+        if (delta <= 0) return null;
+        const price = Number(item.price) || 0;
+        return {
+          id: productIdForName(item.name),
+          quantity: delta,
+          item_price: price
+        };
+      }).filter(Boolean);
+
+      beforeCart = null;
+      clickedAt = 0;
+      if (!added.length) return;
+
+      const value = added.reduce((sum, item) => sum + item.quantity * item.item_price, 0);
+      track("AddToCart", {
+        content_ids: [...new Set(added.map(item => item.id))],
+        contents: added,
+        content_type: "product",
+        num_items: added.reduce((sum, item) => sum + item.quantity, 0),
+        value,
+        currency: "INR"
+      });
+    });
+  }
+
   function pageContextEvents() {
     track("PageView");
 
@@ -71,9 +128,9 @@
         const value = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 1), 0);
         const numItems = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
         track("InitiateCheckout", {
-          content_ids: cart.map(item => String(item.name || "product")),
+          content_ids: [...new Set(cart.map(item => productIdForName(item.name)))],
           contents: cart.map(item => ({
-            id: String(item.name || "product"),
+            id: productIdForName(item.name),
             quantity: Number(item.qty) || 1,
             item_price: Number(item.price) || 0
           })),
@@ -109,6 +166,7 @@
 
     window.fbq("init", PIXEL_ID);
     pageContextEvents();
+    installAddToCartTracking();
   }
 
   function saveConsent(choice) {
