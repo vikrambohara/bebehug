@@ -96,7 +96,7 @@
   }
 
   function pageContextEvents() {
-    track("PageView");
+    track("PageView", { page_path: window.location.pathname, page_title: document.title });
 
     const product = window.PRODUCT_PAGE;
     if (product && product.id && product.title) {
@@ -118,7 +118,9 @@
         contents: [{ id: String(product.id), quantity: 1, item_price: value }],
         value,
         currency: "INR",
-        content_variant: [selectedSize, colour].filter(Boolean).join(" / ")
+        content_variant: [selectedSize, colour].filter(Boolean).join(" / "),
+        page_path: window.location.pathname,
+        page_title: document.title
       });
     }
 
