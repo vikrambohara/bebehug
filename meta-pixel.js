@@ -170,13 +170,19 @@
   }
 
   function saveConsent(choice) {
+    const pixelWasLoaded = initialized;
     consent = choice;
     try { localStorage.setItem(CONSENT_KEY, choice); } catch (error) {}
     const banner = document.getElementById("bebehug-cookie-banner");
     if (banner) banner.remove();
     const settings = document.getElementById("bebehug-cookie-settings");
     if (settings) settings.hidden = false;
-    if (choice === "accepted") initializePixel();
+    if (choice === "accepted") {
+      initializePixel();
+    } else if (pixelWasLoaded) {
+      // Reload after consent withdrawal so the already-loaded Meta library is unloaded.
+      window.location.reload();
+    }
   }
 
   function createButton(label, background, color, onClick) {
