@@ -273,7 +273,14 @@
     const actions = document.createElement("div");
     Object.assign(actions.style, { display: "grid", gap: "14px" });
 
-    const continueButton = createButton("CONTINUE  →", "#000000", "#ffffff", () => saveConsent("accepted"));
+    const continueButton = createButton("CONTINUE", "#000000", "#ffffff", () => saveConsent("accepted"));
+    continueButton.style.display = "flex";
+    continueButton.style.alignItems = "center";
+    continueButton.style.justifyContent = "space-between";
+    const continueArrow = document.createElement("span");
+    continueArrow.textContent = "→";
+    continueArrow.setAttribute("aria-hidden", "true");
+    continueButton.appendChild(continueArrow);
     continueButton.setAttribute("aria-label", "Continue and allow optional marketing tracking");
 
     const manageButton = document.createElement("button");
