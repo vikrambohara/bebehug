@@ -211,7 +211,7 @@
     banner = document.createElement("section");
     banner.id = "bebehug-cookie-banner";
     banner.setAttribute("role", "dialog");
-    banner.setAttribute("aria-label", "Optional advertising cookie preferences");
+    banner.setAttribute("aria-label", "Bebehug cookie and marketing tracking choices");
     Object.assign(banner.style, {
       position: "fixed",
       left: "16px",
@@ -231,11 +231,11 @@
     });
 
     const title = document.createElement("strong");
-    title.textContent = "Your privacy choices";
+    title.textContent = "A better Bebehug shopping experience";
     Object.assign(title.style, { display: "block", fontSize: "15px", marginBottom: "5px" });
 
     const copy = document.createElement("p");
-    copy.textContent = "With your permission, Bebehug uses Meta Pixel to measure page visits, product views, add-to-cart and checkout actions, and confirmed purchases. Meta may receive product/event details plus browser, device and connection information to measure campaigns and show relevant Bebehug ads on Facebook and Instagram. Accept or reject optional marketing tracking; you can change your choice later in Cookie settings. Read our ";
+    copy.textContent = "We use essential browser storage to keep shopping features such as your cart working. With your permission, optional marketing cookies and similar technologies help us understand which products shoppers are interested in, measure our promotions, and make Bebehug ads more relevant. If enabled, Meta may receive details of page visits, product views, cart and checkout actions, and confirmed purchases, along with certain browser, device and connection-related information for advertising measurement. You can reject optional marketing tracking and continue shopping normally. You can change your choice anytime in Cookie settings. Read our ";
     Object.assign(copy.style, { margin: "0 0 12px", color: "#536b7d" });
     const privacyLink = document.createElement("a");
     privacyLink.href = "privacy-policy.html";
@@ -246,9 +246,15 @@
     copy.appendChild(document.createTextNode("."));
 
     const actions = document.createElement("div");
-    Object.assign(actions.style, { display: "flex", gap: "9px", flexWrap: "wrap" });
-    actions.appendChild(createButton("Accept marketing cookies", "#f34d7d", "#ffffff", () => saveConsent("accepted")));
-    actions.appendChild(createButton("Reject optional cookies", "#eef5f8", "#183858", () => saveConsent("rejected")));
+    Object.assign(actions.style, { display: "flex", gap: "9px", flexWrap: "wrap", alignItems: "stretch" });
+    const acceptButton = createButton("Accept marketing cookies", "#f34d7d", "#ffffff", () => saveConsent("accepted"));
+    Object.assign(acceptButton.style, { flex: "1 1 180px", minWidth: "0", minHeight: "46px", whiteSpace: "normal", lineHeight: "1.3" });
+    acceptButton.setAttribute("aria-label", "Accept optional Bebehug marketing cookies");
+    actions.appendChild(acceptButton);
+    const rejectButton = createButton("Reject optional cookies", "#eef5f8", "#183858", () => saveConsent("rejected"));
+    Object.assign(rejectButton.style, { flex: "1 1 180px", minWidth: "0", minHeight: "46px", whiteSpace: "normal", lineHeight: "1.3", border: "1px solid #d8e7ee" });
+    rejectButton.setAttribute("aria-label", "Reject optional Bebehug marketing cookies");
+    actions.appendChild(rejectButton);
 
     banner.append(title, copy, actions);
     document.body.appendChild(banner);
