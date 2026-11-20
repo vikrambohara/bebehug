@@ -231,11 +231,11 @@
     });
 
     const title = document.createElement("strong");
-    title.textContent = "A better Bebehug shopping experience";
+    title.textContent = "PROTECTING YOUR PRIVACY";
     Object.assign(title.style, { display: "block", fontSize: "15px", marginBottom: "5px" });
 
     const copy = document.createElement("p");
-    copy.textContent = "We use essential browser storage to keep shopping features such as your cart working. With your permission, optional marketing cookies and similar technologies help us understand which products shoppers are interested in, measure our promotions, and make Bebehug ads more relevant. If enabled, Meta may receive details of page visits, product views, cart and checkout actions, and confirmed purchases, along with certain browser, device and connection-related information for advertising measurement. You can reject optional marketing tracking and continue shopping normally. You can change your choice anytime in Cookie settings. Read our ";
+    copy.textContent = "We use essential storage to keep Bebehug working, including your shopping cart. With your permission, optional marketing cookies help us understand how visitors interact with our products and measure our advertising, so we can improve your shopping experience and make our promotions more relevant. You can change your choice anytime in Cookie settings. Read our ";
     Object.assign(copy.style, { margin: "0 0 12px", color: "#536b7d" });
     const privacyLink = document.createElement("a");
     privacyLink.href = "privacy-policy.html";
