@@ -220,18 +220,24 @@
     banner.setAttribute("aria-label", "Protecting your privacy");
     Object.assign(banner.style, {
       position: "fixed",
-      left: "0",
-      right: "0",
-      bottom: "0",
+      inset: "0",
       zIndex: "100000",
+      display: "flex",
+      alignItems: "flex-end",
+      justifyContent: "center",
+      width: "100%",
+      padding: "0",
+      background: "rgba(0,0,0,.72)",
+      boxSizing: "border-box"
+    });
+
+    const panel = document.createElement("div");
+    Object.assign(panel.style, {
       width: "100%",
       maxWidth: "760px",
       maxHeight: "88vh",
       overflowY: "auto",
-      margin: "0 auto",
       padding: "30px 24px 24px",
-      border: "0",
-      borderRadius: "0",
       background: "#ffffff",
       color: "#111111",
       boxShadow: "0 -8px 32px rgba(0,0,0,.18)",
@@ -250,7 +256,7 @@
     });
 
     const copy = document.createElement("p");
-    copy.textContent = "We use cookies and tracking to make our site work. To help us improve and personalise your experience, we also use optional tracking for analytics and marketing personalisation. This means better insights, more relevant content and offers. Opting in allows optional cookies and similar technologies to be stored or used on your device for these purposes. If you choose not to opt in, you can still browse, shop and check out; analytics and personalised advertising may be limited. For more detailed information, see our ";
+    copy.textContent = "We use cookies and tracking to make our site work. To help us improve and personalise your experience, we also use optional tracking for analytics and marketing personalisation. This means better content and offers. Opting in allows optional cookies and similar technologies to be stored on your device to support these purposes. If you choose not to opt in, you can still access the main features of our site, including browsing, shopping and checkout, but analytics and personalised advertising may be limited. For more detailed information see our ";
     Object.assign(copy.style, {
       margin: "0 0 22px",
       color: "#222222",
@@ -294,7 +300,7 @@
         createButton("BACK", "transparent", "#111111", () => {
           title.textContent = "PROTECTING YOUR PRIVACY";
           copy.innerHTML = "";
-          copy.textContent = "We use cookies and tracking to make our site work. To help us improve and personalise your experience, we also use optional tracking for analytics and marketing personalisation. This means better insights, more relevant content and offers. Opting in allows optional cookies and similar technologies to be stored or used on your device for these purposes. If you choose not to opt in, you can still browse, shop and check out; analytics and personalised advertising may be limited. For more detailed information, see our ";
+          copy.textContent = "We use cookies and tracking to make our site work. To help us improve and personalise your experience, we also use optional tracking for analytics and marketing personalisation. This means better content and offers. Opting in allows optional cookies and similar technologies to be stored on your device to support these purposes. If you choose not to opt in, you can still access the main features of our site, including browsing, shopping and checkout, but analytics and personalised advertising may be limited. For more detailed information see our ";
           copy.appendChild(privacyLink);
           copy.appendChild(document.createTextNode("."));
           actions.replaceChildren(continueButton, manageButton);
@@ -324,7 +330,8 @@
 
     actions.append(continueButton, manageButton);
     footerLinks.append(cookiePolicyLink, imprintLink);
-    banner.append(title, copy, actions, footerLinks);
+    panel.append(title, copy, actions, footerLinks);
+    banner.appendChild(panel);
     document.body.appendChild(banner);
     document.getElementById("bebehug-cookie-settings")?.setAttribute("aria-expanded", "true");
   }
