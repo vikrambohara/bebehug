@@ -256,7 +256,7 @@
     });
 
     const copy = document.createElement("p");
-    copy.textContent = "We use cookies and tracking to make our site work. To help us improve and personalise your experience, we also use optional tracking for analytics and marketing personalisation. This means better content and offers. Opting in will set cookies on your device and help us personalise your experience. If you choose not to opt in, optional analytics and marketing personalisation will be disabled, and your experience may be less tailored. For more detailed information see our ";
+    copy.textContent = "We use cookies and tracking to make our site work. To help us improve and personalise your experience, we also use optional tracking for analytics and marketing personalisation. This means better content and offers. Opting in will set cookies on your device and help us personalise your experience. If you choose not to opt in, you may not see personalised content and offers, and your experience may be less tailored. For more detailed information see our ";
     Object.assign(copy.style, {
       margin: "0 0 22px",
       color: "#222222",
